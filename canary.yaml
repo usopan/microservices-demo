@@ -1,0 +1,41 @@
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: demo-service
+  namespace: demo
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: demo-service
+    namespace: demo
+  progressDeadlineSeconds: 180
+  service:
+    port: 8080
+    gateways:
+    - discovery-gateway.discovery.svc.cluster.local
+    hosts:
+    - discovery-api-preprod.wynk.in
+    match:
+      - uri:
+          prefix: /demo-service
+    rewrite:
+      uri: /
+    trafficPolicy:
+      tls:
+        # use ISTIO_MUTUAL when mTLS is enabled
+        mode: DISABLE
+  skipAnalysis: true    
+  analysis:
+    interval: 30s
+    threshold: 10
+    maxWeight: 20
+    stepWeight: 5
+    mirror: true
+    metrics:
+    - name: request-success-rate
+      threshold: 99
+      interval: 30s
+    - name: request-duration
+      threshold: 500
+      interval: 30s

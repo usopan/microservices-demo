@@ -1,0 +1,32 @@
+kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v2beta1
+metadata:
+  name: demo-service-primary-autoscaler
+  namespace: demo
+  annotations:
+    metric-config.external.prometheus-query.prometheus/prometheus-server: "http://prometheus.istio-system.svc.cluster.local:9090"
+    metric-config.external.prometheus-query.prometheus/demo-service-requests-total: |
+      sum(
+        rate(
+          istio_requests_total{
+            destination_workload="demo-service-primary",
+            destination_workload_namespace="demo",
+            pod_name=~"demo-service-primary.*"
+          }[1m]
+        )
+      )
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: demo-service-primary
+    apiVersion: apps/v1
+  minReplicas: 4
+  maxReplicas: 10
+  metrics:
+    - type: External
+      external:
+        metricName: prometheus-query
+        metricSelector:
+          matchLabels:
+            query-name: demo-service-requests-total
+        targetAverageValue: "40"

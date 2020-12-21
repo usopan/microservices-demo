@@ -1,0 +1,41 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-service
+  namespace: demo
+  labels:
+    app: demo-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-service
+  template:
+    metadata:
+      labels:
+        app: demo-service
+    spec:
+      serviceAccountName: demo-service-sa
+      containers:
+        - name: demo-service
+          image: 536123028970.dkr.ecr.ap-south-1.amazonaws.com/demo-pre-prod-demo-service:49
+          imagePullPolicy: Always
+          env:
+            - name: QUARKUS_PROFILE
+              value: "stg"
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 5         
+---

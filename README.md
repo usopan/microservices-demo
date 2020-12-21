@@ -1,14 +1,14 @@
 # microservices-demo
 
-Install Minikube
+#Install Minikube
 ______________________
 https://minikube.sigs.k8s.io/docs/start/
 
-Install docker
+# Install docker
 
-Launch minikube
+# Launch minikube
 
-Build and push docker file.
+# Build and push docker file.
 e.g.
 docker build -f src/main/docker/Dockerfile.jvm -t usopan/microservices-demo .
 

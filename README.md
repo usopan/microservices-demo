@@ -7,7 +7,11 @@ https://minikube.sigs.k8s.io/docs/start/
 # Install docker
 
 # Launch minikube
+minikube start
 
+# install istio on minikube 
+Follow steps from here
+https://medium.com/faun/istio-step-by-step-part-10-installing-istio-1-4-in-minikube-ebce9a4e99c
 # Build and push docker file.
 e.g.
 docker build -f src/main/docker/Dockerfile.jvm -t usopan/microservices-demo .
